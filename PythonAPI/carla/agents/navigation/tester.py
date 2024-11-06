@@ -2,31 +2,33 @@ import math
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from a_star import astar, heuristic
+from astar import astar, heuristic
 
 
-def build_graph():
+def build_graph():  # Bulids a graph, mess withth
         G = nx.DiGraph()
         # Lets create a grid to resemble city with blocks
         for x in range(6):
-                G.add_node(x)
-                G.add_node(x+6)
-                G.add_node(x+12)
-                G.add_node(x+18)
+                G.add_node(x, vertex=(x, 0, 0))
+                print(G.nodes[x])
+                G.add_node(x + 6, vertex=(x, 0, 1))
+                G.add_node(x + 12, vertex=(x, 0, 1))
+                G.add_node(x + 18, vertex=(x, 0, 0))
 
         for x in range(36):
-                if (x%6 != 5):
+                if (x % 6 != 5):
                         # print("in the other bay", x) debug help
-                        if (x%5):
-                                G.add_edge(x, x+1)
-                                G.add_edge(x+1, x)
-                if (x/6 < 4):
+                        # if (x%5):
+                        G.add_edge(x, x + 1)
+                        G.add_edge(x + 1, x)
+                if (x / 6 < 4):
                         # print("in this bay", x) debug help
-                        G.add_edge(x, x+6)
-                        G.add_edge(x+6, x)
+                        G.add_node(x + 6, vertex=(x, 0, 0))
+                        G.add_edge(x, x + 6)
+                        G.add_edge(x + 6, x)
 
         G.add_edge(29, 30)
- 
+
         return G
 
 
@@ -44,16 +46,18 @@ def _path_search_new(G, start, end):
         """
         # start, end = self._localize(origin), self._localize(destination)
 
-        
-
         # The localize function returns the edge corresponding to the road segment that the car is currently on.
 
         # So if we run localize on the carla location, it will return something like the following
         # start = [1, 2]
         # end = [18, 19]
 
-        # route = nx.astar_path(G, source=start[0], target=end[0], weight='length')
-        route = astar(G, start=start[0], goal=end[0])
+        route = nx.astar_path(G,
+                              source=start[0],
+                              target=end[0],
+                              weight='length')
+
+        # route = astar(G, start=start[0], goal=end[0])
         route.append(end[1])
         return route
 
@@ -64,10 +68,12 @@ def main():
         end = [23, 29]
         route = _path_search_new(G, start, end)
         for street in route:
+                print(G.nodes[street]['vertex'])
                 print(street)
-                
+
         nx.draw(G, with_labels=True)
         plt.show()
+
 
 # if __name__ == "main":
 #         main()
