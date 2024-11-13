@@ -2,7 +2,22 @@ import math
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from astar import astar, heuristic
+# from global_route_planner import *
+from a_star import *
+
+# grp = GlobalRoutePlanner()
+class GRP (object):
+        def __init__(self, G):
+                self._graph = G
+
+        def _distance_heuristic(self, n1, n2):
+                """
+                Distance heuristic calculator for path searching
+                in self._graph
+                """
+                l1 = np.array(self._graph.nodes[n1]['vertex'])
+                l2 = np.array(self._graph.nodes[n2]['vertex'])
+                return np.linalg.norm(l1-l2)
 
 
 def build_graph():  # Bulids a graph, mess withth
@@ -31,8 +46,7 @@ def build_graph():  # Bulids a graph, mess withth
 
         return G
 
-
-def _path_search_new(G, start, end):
+def _path_search_new(G, start, end, grp):
         """
         This function finds a path between the origin and destination
         using IDA* search.
@@ -57,6 +71,7 @@ def _path_search_new(G, start, end):
                               target=end[0],
                               weight='length')
 
+        route = astar(G, start=start[0], goal=end[0], heuristic=grp._distance_heuristic, weight='length')
         # route = astar(G, start=start[0], goal=end[0])
         route.append(end[1])
         return route
@@ -64,9 +79,11 @@ def _path_search_new(G, start, end):
 
 def main():
         G = build_graph()
+        grp = GRP(G)
+
         start = [0, 1]
         end = [23, 29]
-        route = _path_search_new(G, start, end)
+        route = _path_search_new(G, start, end, grp)
         for street in route:
                 print(G.nodes[street]['vertex'])
                 print(street)

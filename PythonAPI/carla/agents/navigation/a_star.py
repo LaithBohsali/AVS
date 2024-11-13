@@ -15,10 +15,7 @@ class Node:
     def __lt__(self, other):
         return self.f < other.f  # Priority queue will sort by the total cost f
 
-def heuristic(a,b):
-    return abs(a-b)
-
-def astar(graph, start, goal):
+def astar(graph, start, goal, heuristic, weight):
     # Open list and closed list
     open_list = []
     closed_list = set()
@@ -45,13 +42,14 @@ def astar(graph, start, goal):
 
         # Explore neighbors
         neighbors = graph.neighbors(current_node.position)  # Function to return valid neighbors
+        print(list(neighbors))
+        print("Pickel pie pickles")
         for neighbor_pos, cost in neighbors:
             if neighbor_pos in closed_list:
-                if ()
                 continue  # Skip already visited nodes instead of skipping, we should check if the weight is less going through the current path
 
             # Create a new node for this neighbor
-            neighbor_g = current_node.g + cost  # Actual cost from start to neighbor
+            neighbor_g = current_node.g + 1  # Actual cost from start to neighbor
             neighbor_h = heuristic(neighbor_pos, goal)  # Heuristic cost from neighbor to goal
             neighbor_node = Node(position=neighbor_pos, g=neighbor_g, h=neighbor_h, parent=current_node)
 
@@ -62,5 +60,6 @@ def astar(graph, start, goal):
             # Add the neighbor to the open list
             heapq.heappush(open_list, neighbor_node)
 
-    return None
+    print(path)
+    return path
 
